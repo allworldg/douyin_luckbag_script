@@ -11,7 +11,17 @@ if (!images.requestScreenCapture()) {
 let find_result = findLuckBag();
 if(find_result==null){
   console.log("not found luckbag")
+  //todo
 }
+let audience_widget = id("omh").descContains("在线观众").findOne(2000)
+if(audience_widget==null){
+  toastLog("cannot find audience widget,exit")
+  exit()
+}
+let audienceCount = audience_widget.getText()
+toastLog("audience count is "+audienceCount)
+
+
 
 function findLuckBag() {
   let region = [25, 310, 200, 200];

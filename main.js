@@ -1,16 +1,23 @@
-setScreenMetrics(2160,1080)
+auto();
+setScreenMetrics(1080, 2160);
 
-let founded = launchApp("抖音")
-if(!founded){
-    toastLog("未找到抖音")
+if (!images.requestScreenCapture()) {
+  toastLog("请求截图失败,程序退出");
+  exit();
 }
-let btnObject = desc("团购，按钮").findOne(10000)
-if(btnObject==null){
-    toastLog("无法找到 团购 按钮，请联系管理员")
+test_search();
+
+function test_search() {
+  let region = [25, 310, 200, 200];
+  let shrinkWidth = device.width / 1080; //1080 and 2400 is the data from the device which get "fudai_picture.jpg"
+  let shrinkHeight = device.height / 2400;
+  let target_img = images.read(files.path("./images/fudai_picture.jpg"));
+  target_img = images.scale(target_img,shrinkWidth,shrinkHeight)
+  let pic = captureScreen();
+  let result = images.findImage(pic, target_img, {
+    threshold: 0.8,
+    region: region,
+  });
+  toastLog(result);
+  click(result.x,result.y)
 }
-btnObject.click()
-sleep(3000)
-
-
-
-

@@ -1,39 +1,44 @@
 auto();
 setScreenMetrics(1080, 2160);
+const { MAX_COUNTDOWN_SECONDS,MAX_AUDIENCE_COUNT } = require("./contants");
+
 console.setGlobalLogConfig({
-  file:files.path("./log/log.txt")
-})
+  file: files.path("./log/log.txt"),
+});
 
 if (!images.requestScreenCapture()) {
   toastLog("请求截图失败,程序退出");
   exit();
 }
 let find_luckbag_result = findLuckBag();
-if(find_luckbag_result==null){
-  console.log("not foundluckbag")
+if (find_luckbag_result == null) {
+  console.log("not foundluckbag");
   //todo
 }
-let audience_widget = id("omh").descContains("在线观众").findOne(2000)
-toastLog(audience_widget.text())
-if(audience_widget==null){
-  toastLog("cannot find audience widget,will todo ")
+let audience_widget = id("omh").descContains("在线观众").findOne(2000);
+if (audience_widget == null) {
+  toastLog("cannot find audience widget,will todo ");
   //todo : how to solve
 }
-let audienceCount = audience_widget.getText()
-click(find_luckbag_result.x,find_luckbag_result.y)
-let timeWidget = className("com.lynx.tasm.behavior.ui.text.FlattenUIText").textContains(":").depth(14).findOne(2000)
-if(timeWidget==null){
-  toastLog("cannot get countdown, will exit...")
-  exit()
+const audienceCountText = audience_widget.getText();
+click(find_luckbag_result.x, find_luckbag_result.y);
+let timeWidget = className("com.lynx.tasm.behavior.ui.text.FlattenUIText")
+  .textContains(":")
+  .depth(14)
+  .findOne(2000);
+if (timeWidget == null) {
+  toastLog("cannot get countdown, will exit...");
+  exit();
 }
-let countdownTime = timeWidget.text()
-toastLog(countdownTime)
-
-
-
-
-
-
+let countdownText = timeWidget.text();
+const array_countdown = countdownText.split(":")
+const countdownTime = parseInt(array_countdown[0])*60+parseInt(array_countdown[1])
+const audienceCount = parseInt(audienceCountText)
+if(countdownTime>MAX_COUNTDOWN_SECONDS||audienceCount>MAX_AUDIENCE_COUNT){
+  // do nothing
+}else{
+  
+}
 
 
 function findLuckBag() {
@@ -47,5 +52,6 @@ function findLuckBag() {
     threshold: 0.8,
     region: region,
   });
-  return result
+  return result;
 }
+

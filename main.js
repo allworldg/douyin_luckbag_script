@@ -8,18 +8,31 @@ if (!images.requestScreenCapture()) {
   toastLog("请求截图失败,程序退出");
   exit();
 }
-let find_result = findLuckBag();
-if(find_result==null){
-  console.log("not found luckbag")
+let find_luckbag_result = findLuckBag();
+if(find_luckbag_result==null){
+  console.log("not foundluckbag")
   //todo
 }
 let audience_widget = id("omh").descContains("在线观众").findOne(2000)
+toastLog(audience_widget.text())
 if(audience_widget==null){
-  toastLog("cannot find audience widget,exit")
-  exit()
+  toastLog("cannot find audience widget,will todo ")
+  //todo : how to solve
 }
 let audienceCount = audience_widget.getText()
-toastLog("audience count is "+audienceCount)
+click(find_luckbag_result.x,find_luckbag_result.y)
+let timeWidget = className("com.lynx.tasm.behavior.ui.text.FlattenUIText").textContains(":").depth(14).findOne(2000)
+if(timeWidget==null){
+  toastLog("cannot get countdown, will exit...")
+  exit()
+}
+let countdownTime = timeWidget.text()
+toastLog(countdownTime)
+
+
+
+
+
 
 
 

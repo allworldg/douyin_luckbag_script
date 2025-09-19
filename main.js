@@ -7,6 +7,8 @@ const {
   MAX_AUDIENCE_RATIO,
   CLILCKABLE_EMPTY_Y,
   CLICKABLE_EMPTY_X,
+  GESTURE_TO_NEXT_X,
+  GESTURE_TO_NEXT_Y,
 } = require("./contants");
 
 console.setGlobalLogConfig({
@@ -17,10 +19,14 @@ if (!images.requestScreenCapture()) {
   toastLog("请求截图失败,程序退出");
   exit();
 }
-let find_luckbag_result = findLuckBag();
+
 if (find_luckbag_result == null) {
-  console.log("not foundluckbag");
-  //todo
+  sleep(10000);
+  find_luckbag_result = findLuckBag();
+  if (find_luckbag_result == null) {
+    console.log("not foundluckbag, go to next");
+    scrollDown();
+  }
 }
 let audience_widget = id("omh").descContains("在线观众").findOne(2000);
 if (audience_widget == null) {
@@ -63,7 +69,10 @@ if (
   let click_y = Math.floor(
     Math.random() * CLILCKABLE_EMPTY_Y.OFFSET + CLILCKABLE_EMPTY_Y.INITIAL
   );
-  click(click_x,click_y)
+  click(click_x, click_y);
+  sleep(1000);
+  scrollDown();
+  toastLog("scrolldown");
 }
 
 function findLuckBag() {
@@ -78,4 +87,25 @@ function findLuckBag() {
     region: region,
   });
   return result;
+}
+
+function findOrScrollDown() {
+  while (true) {
+    let find_luckbag_result = null;
+    for (let i = 0; i < 2; i++) {
+      find_luckbag_result = findLuckBag();
+      if (find_luckbag_result == null) {
+        if (i == 0) continue;
+        if (scrollDown() == false) {
+          toastLog("cannot scrollDown,exit..");
+          exit();
+        }
+      } else {
+        return find_luckbag_result;
+      }
+    }
+    if (find_luckbag_result != null) {
+      return find_luckbag_result;
+    }
+  }
 }
